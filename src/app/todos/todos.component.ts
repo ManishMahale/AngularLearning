@@ -12,8 +12,22 @@ import { Todo } from '../model/todo.type';
 export class TodosComponent implements OnInit {
   todoService = inject(TodosService);
   todoItems = signal<Todo[]>([]);
-    ngOnInit(): void {
-    console.log(this.todoService.getTodosFromApi());
-    this.todoItems.set(this.todoService.todoItem);
+  //   ngOnInit(): void {
+  //   console.log(this.todoService.getTodosFromApi());
+  //   this.todoItems.set(this.todoService.todoItem);
+  // }
+
+  ngOnInit(): void {
+    this.todoService
+      .getTodosFromApi()
+      .pipe(
+        catchError((err) => {
+          console.log(err);
+          throw err;
+        })
+      )
+      .subscribe(todos => {
+        this.todoItems.set(todos);
+      });
   }
 }
